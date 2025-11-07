@@ -1,0 +1,53 @@
+.register-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f3f6ff 0%, #e8edff 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+}
+
+.register-card {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  width: 420px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.register-card h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.register-card p {
+  color: #555;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+button {
+  background: #0a0a1f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+button:hover {
+  opacity: 0.9;
+}

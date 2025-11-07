@@ -7,6 +7,7 @@ import MongoStore from "connect-mongo";
 import passport from "passport";
 import "./config/passport.js";
 import authRoutes from "./routes/authRoutes.js";
+import registerRoutes from "./routes/registerRoutes.js"
 import { isAuthed, requireRole } from "./middleware/auth.js";
 
 dotenv.config();
@@ -38,11 +39,13 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("Mongo connected"));
 
 app.use("/auth", authRoutes);
+app.use('/api/register' , registerRoutes);
 
 // Example protected APIs
 app.get("/api/driver/secret", isAuthed, requireRole("driver"), (req, res) => {

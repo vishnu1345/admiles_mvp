@@ -3,6 +3,8 @@ import LandingPage from "./pages/LandingPage";
 import DriverDashboard from "./pages/DriverDashboard";
 import BusinessDashboard from "./pages/BusinessDashboard";
 import ProtectedRoute from "./utils/ProtectedRoute";
+import RegisterDriver from "./pages/RegisterDriver";
+import RegisterAgency from "./pages/RegisterAgency";
 
 export default function App() {
   return (
@@ -25,6 +27,8 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/register/driver" element={<RegisterDriver />} />
+        <Route path="/register/business" element={<RegisterAgency />} />
       </Routes>
     </BrowserRouter>
   );

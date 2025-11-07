@@ -45,6 +45,12 @@ router.get(
     // clear role hint after use
     if (req.session) req.session.role = undefined;
 
+    if (!req.user.completed) {
+      return res.redirect(
+        `${process.env.CLIENT_URL}/register/${req.user.role}`
+      );
+    }
+
     // Redirect based on persisted role
     const role = req.user.role;
     if (role === "driver") {
