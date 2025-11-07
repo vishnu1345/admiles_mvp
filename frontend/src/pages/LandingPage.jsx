@@ -2,13 +2,17 @@ import React from "react";
 import "./LandingPage.css";
 import CardBox from "../components/SignupCard";
 
+const API = "http://localhost:4000";
+
 function LandingPage() {
   return (
     <div className="landing-container">
       <nav className="navbar">
         <h2 className="logo">🚖 AdMiles</h2>
         <p className="tagline">Connecting Drivers & Advertisers</p>
-        <button className="login-btn">Login</button>
+        <a className="login-btn" href={`${API}/auth/google-login`}>
+          Login
+        </a>
       </nav>
 
       <section className="hero">
@@ -51,7 +55,9 @@ function LandingPage() {
             "Flexible schedule",
             "Quick photo verification",
           ]}
-          
+          onClick={() => {
+            window.location.href = `${API}/auth/google?role=driver`;
+          }}
         />
 
         <CardBox
@@ -64,6 +70,9 @@ function LandingPage() {
             "Manage multiple drivers",
             "Real-time monitoring",
           ]}
+          onClick={() => {
+            window.location.href = `${API}/auth/google?role=business`;
+          }}
         />
       </section>
 
