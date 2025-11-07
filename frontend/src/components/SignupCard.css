@@ -1,0 +1,50 @@
+.cardbox {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  width: 320px;
+  padding: 24px 20px;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+}
+
+.cardbox-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.cardbox-desc {
+  color: #555;
+  font-size: 15px;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.btn {
+  width: 100%;
+  padding: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: black;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #444;
+  font-size: 14px;
+  line-height: 1.8;
+}

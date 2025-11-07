@@ -1,5 +1,6 @@
 import React from "react";
 import "./LandingPage.css";
+import CardBox from "../components/SignupCard";
 
 function LandingPage() {
   return (
@@ -7,6 +8,7 @@ function LandingPage() {
       <nav className="navbar">
         <h2 className="logo">🚖 AdMiles</h2>
         <p className="tagline">Connecting Drivers & Advertisers</p>
+        <button className="login-btn">Login</button>
       </nav>
 
       <section className="hero">
@@ -39,8 +41,30 @@ function LandingPage() {
       </section>
 
       <section className="cards">
-        <div className="white-card"></div>
-        <div className="white-card"></div>
+        <CardBox
+          title="Rickshaw Driver"
+          description="Join as a driver to earn money by displaying ads on your rickshaw"
+          buttonText="Signup as Driver"
+          features={[
+            "Browse available ad campaigns",
+            "Earn per kilometer driven",
+            "Flexible schedule",
+            "Quick photo verification",
+          ]}
+          
+        />
+
+        <CardBox
+          title="Advertising Agency"
+          description="Create campaigns and reach customers through mobile advertisements"
+          buttonText="Signup as Agency"
+          features={[
+            "Create targeted campaigns",
+            "Track ad performance",
+            "Manage multiple drivers",
+            "Real-time monitoring",
+          ]}
+        />
       </section>
 
       <footer>
