@@ -105,12 +105,17 @@ footer {
 }
 
 .login-btn{
-  height: 4vh;
-  width: 6vw;
-  background-color: black;
-  color: white;
-  border-radius: 10px;
-  cursor: pointer;
+ height: 4vh;
+    width: 6vw;
+    background-color: black;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
 }
 

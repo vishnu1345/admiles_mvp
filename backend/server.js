@@ -21,17 +21,22 @@ app.use(
 );
 app.use(express.json());
 
+
+
 // Session store in Mongo (so sessions survive restarts)
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      ttl: 15 * 24 * 60 * 60,
+    }),
     cookie: {
       httpOnly: true,
+      maxAge: 15 * 24 * 60 * 60 * 1000,
       sameSite: "lax", // in production with HTTPS consider 'none' + secure: true
-      
     },
   })
 );

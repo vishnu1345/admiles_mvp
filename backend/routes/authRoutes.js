@@ -3,64 +3,47 @@ import passport from "passport";
 
 const router = express.Router();
 
-/**
- * SIGNUP with role:
- * /auth/google?role=driver
- * /auth/google?role=business
- */
-
+/* ---------- SIGNUP WITH ROLE ---------- */
 router.get(
   "/google",
   (req, res, next) => {
     const role = (req.query.role || "").toLowerCase();
-    if (!["driver", "business"].includes(role)) {
+    if (!["driver", "business"].includes(role))
       return res.status(400).send("Invalid or missing role");
-    }
-    req.session.role = role; // used in passport verify callback
+    req.session.role = role;
     next();
   },
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-
-/**
- * LOGIN (single button). No role is set here.
- * If user already exists, they’ll be found; if not, we reject in the strategy.
- */
+/* ---------- LOGIN (no role, just existing users) ---------- */
 router.get(
   "/google-login",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-
-/**
- * Common callback for both signup & login
- */
+/* ---------- CALLBACK ---------- */
 router.get(
   "/google/callback",
   passport.authenticate("google", {
     failureRedirect: process.env.CLIENT_URL + "?auth=failed",
   }),
   (req, res) => {
-    // clear role hint after use
     if (req.session) req.session.role = undefined;
 
+    const role = req.user.role;
+
+    // If profile incomplete → go to registration form
     if (!req.user.completed) {
-      return res.redirect(
-        `${process.env.CLIENT_URL}/register/${req.user.role}`
-      );
+      return res.redirect(`${process.env.CLIENT_URL}/register/${role}`);
     }
 
-    // Redirect based on persisted role
-    const role = req.user.role;
-    if (role === "driver") {
-      return res.redirect(process.env.CLIENT_URL + "/driver-dashboard");
-    }
-    return res.redirect(process.env.CLIENT_URL + "/business-dashboard");
+    // Otherwise → dashboard
+    return res.redirect(`${process.env.CLIENT_URL}/${role}-dashboard`);
   }
 );
 
-/** who am i */
+/* ---------- WHO AM I (session check) ---------- */
 router.get("/me", (req, res) => {
   if (!req.user) return res.json(null);
   res.json({
@@ -68,14 +51,15 @@ router.get("/me", (req, res) => {
     name: req.user.name,
     email: req.user.email,
     role: req.user.role,
+    completed: req.user.completed,
   });
 });
 
-
+/* ---------- LOGOUT ---------- */
 router.get("/logout", (req, res) => {
   req.logout(() => {
     res.clearCookie("connect.sid");
-    res.redirect(process.env.CLIENT_URL);
+    res.json({ message: "Logged out" });
   });
 });
 
