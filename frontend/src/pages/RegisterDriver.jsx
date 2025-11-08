@@ -34,6 +34,7 @@ export default function RegisterDriver() {
             placeholder="Phone Number"
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            required
           />
           <input
             placeholder="Rickshaw Number Plate"
@@ -41,6 +42,7 @@ export default function RegisterDriver() {
             onChange={(e) =>
               setForm({ ...form, rickshawNumber: e.target.value })
             }
+            required
           />
           <input
             placeholder="Driving License Number"
@@ -48,11 +50,13 @@ export default function RegisterDriver() {
             onChange={(e) =>
               setForm({ ...form, licenseNumber: e.target.value })
             }
+            required
           />
           <input
             placeholder="Upload ID (URL for now)"
             value={form.idDocUrl}
             onChange={(e) => setForm({ ...form, idDocUrl: e.target.value })}
+            required
           />
           <button type="submit">Register as Driver</button>
         </form>

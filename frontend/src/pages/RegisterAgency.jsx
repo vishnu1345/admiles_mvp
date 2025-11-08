@@ -38,6 +38,7 @@ export default function RegisterAgency() {
             placeholder="Company Name"
             value={form.companyName}
             onChange={(e) => setForm({ ...form, companyName: e.target.value })}
+            required
           />
           <input
             placeholder="Contact Person"
@@ -45,21 +46,25 @@ export default function RegisterAgency() {
             onChange={(e) =>
               setForm({ ...form, contactPerson: e.target.value })
             }
+            required
           />
           <input
             placeholder="Phone Number"
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            required
           />
           <input
             placeholder="Business Address"
             value={form.address}
             onChange={(e) => setForm({ ...form, address: e.target.value })}
+            required
           />
           <input
             placeholder="GST Number (Optional)"
             value={form.gst}
             onChange={(e) => setForm({ ...form, gst: e.target.value })}
+            required
           />
           <button type="submit">Register Agency</button>
         </form>

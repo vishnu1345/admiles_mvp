@@ -38,7 +38,7 @@ export default function CreateCampaignModal({ onClose, onCreated }) {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // ✅ Wait a moment for the request to complete before closing
+     
       setTimeout(() => {
         onCreated(); // refresh campaigns
         onClose(); // close modal
@@ -87,6 +87,7 @@ export default function CreateCampaignModal({ onClose, onCreated }) {
             placeholder="Description"
             value={form.description}
             onChange={handleChange}
+            required
           />
 
           <input
@@ -94,6 +95,7 @@ export default function CreateCampaignModal({ onClose, onCreated }) {
             placeholder="Target Location"
             value={form.location}
             onChange={handleChange}
+            required
           />
 
           <input
@@ -101,6 +103,7 @@ export default function CreateCampaignModal({ onClose, onCreated }) {
             placeholder="Campaign Duration (days)"
             value={form.duration}
             onChange={handleChange}
+            required
           />
 
           <input
@@ -108,6 +111,7 @@ export default function CreateCampaignModal({ onClose, onCreated }) {
             placeholder="Earning per KM"
             value={form.earningPerKm}
             onChange={handleChange}
+            required
           />
 
           <input
@@ -115,6 +119,7 @@ export default function CreateCampaignModal({ onClose, onCreated }) {
             placeholder="Total Budget"
             value={form.totalBudget}
             onChange={handleChange}
+            required
           />
 
           <input
@@ -122,6 +127,7 @@ export default function CreateCampaignModal({ onClose, onCreated }) {
             placeholder="Target Drivers"
             value={form.targetDrivers}
             onChange={handleChange}
+            required
           />
 
           <textarea
@@ -134,7 +140,9 @@ export default function CreateCampaignModal({ onClose, onCreated }) {
           {/* Upload Section */}
           <div className="upload-section">
             <label>Upload Campaign Image</label>
-            <input type="file" accept="image/*" onChange={handleFileChange} />
+            <input type="file" accept="image/*" onChange={handleFileChange} 
+                required
+            />
           </div>
 
           <div className="actions">
