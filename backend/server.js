@@ -11,6 +11,10 @@ import registerRoutes from "./routes/registerRoutes.js"
 import { isAuthed, requireRole } from "./middleware/auth.js";
 import campaignRoutes from "./routes/campaignRoutes.js"
 import applicationRoutes from "./routes/applicationRoutes.js";
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 const app = express();
@@ -55,6 +59,7 @@ app.use("/auth", authRoutes);
 app.use('/api/register' , registerRoutes);
 app.use('/api/campaigns' , campaignRoutes);
 app.use("/api/applications", applicationRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Example protected APIs
 app.get("/api/driver/secret", isAuthed, requireRole("driver"), (req, res) => {

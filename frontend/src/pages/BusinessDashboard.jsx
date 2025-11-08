@@ -1,48 +1,62 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../utils/api";
+
 import CreateCampaignModal from "../components/CreateCampaginModal";
 import "./BusinessDashboard.css"
 
 export default function BusinessDashboard() {
-  const [tab, setTab] = useState("campaigns");
-  const [campaigns, setCampaigns] = useState([]);
-  const [applications, setApplications] = useState([]);
+    const [tab, setTab] = useState("campaigns");
   const [showModal, setShowModal] = useState(false);
-  const [user, setUser] = useState(null);
+  const [campaigns, setCampaigns] = useState([]);
+   const [applications, setApplications] = useState([]);
+   const [user, setUser] = useState(null);
 
-  const loadUser = async () => {
-    const { data } = await api.get("/auth/me");
-    setUser(data);
-  };
+    const loadUser = async () => {
+      const { data } = await api.get("/auth/me");
+      setUser(data);
+    };
 
-  const loadCampaigns = async () => {
-    const { data } = await api.get("/api/campaigns");
-    setCampaigns(data);
-  };
+     const loadCampaigns = async () => {
+       const { data } = await api.get("/api/campaigns");
+       setCampaigns(data);
+     };
 
-  const loadApplications = async () => {
-    const { data } = await api.get("/api/applications/business/all");
-    setApplications(data);
-  };
+      const loadApplications = async () => {
+        const { data } = await api.get("/api/applications/business/all");
+        setApplications(data);
+      };
 
-  useEffect(() => {
-    loadUser();
-  }, []);
+//   const fetchCampaigns = async () => {
+//     try {
+//       const { data } = await api.get("/api/campaigns/my");
+//       setCampaigns(data);
+//     } catch (err) {
+//       console.error("Error fetching campaigns", err);
+//     }
+//   };
 
-  useEffect(() => {
-    if (tab === "campaigns") loadCampaigns();
-    else if (tab === "drivers") loadApplications();
-  }, [tab]);
+//   useEffect(() => {
+//     fetchCampaigns();
+//   }, []);
 
-  const approveDriver = async (id) => {
-    try {
-      await api.put(`/api/applications/approve/${id}`);
-      alert("Driver approved successfully!");
-      loadApplications();
-    } catch (err) {
-      alert(err.response?.data?.message || "Error approving driver");
-    }
-  };
+ useEffect(() => {
+   loadUser();
+ }, []);
+
+ useEffect(() => {
+   if (tab === "campaigns") loadCampaigns();
+   else if (tab === "drivers") loadApplications();
+ }, [tab]);
+
+ const approveDriver = async (id) => {
+   try {
+     await api.put(`/api/applications/approve/${id}`);
+     alert("Driver approved successfully!");
+     loadApplications();
+   } catch (err) {
+     alert(err.response?.data?.message || "Error approving driver");
+   }
+ };
 
   const logout = async () => {
     await api.get("/auth/logout");
@@ -88,21 +102,13 @@ export default function BusinessDashboard() {
 
           <div className="campaign-grid">
             {campaigns.map((c) => (
-              <div key={c._id} className="campaign-card">
-                {c.imageUrl ? (
-                  <img src={c.imageUrl} alt={c.title} />
-                ) : (
-                  <div className="placeholder">No Image</div>
-                )}
-                <div className="info">
-                  <h4>{c.title}</h4>
-                  <p>{c.category}</p>
-                  <p>{c.description}</p>
-                  <p>📍 {c.location}</p>
-                  <p>🕓 {c.duration}</p>
-                  <p>💸 ₹{c.earningPerKm}/km</p>
-                  <span className={`status ${c.status}`}>{c.status}</span>
-                </div>
+              <div className="campaign-card" key={c._id}>
+                <img src={`http://localhost:4000${c.imageUrl}`} alt={c.title} />
+                <h4>{c.title}</h4>
+                <p>{c.category}</p>
+                <p>{c.description}</p>
+                <p>₹{c.earningPerKm}/km</p>
+                <span className={`status ${c.status}`}>{c.status}</span>
               </div>
             ))}
           </div>

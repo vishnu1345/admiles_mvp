@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { api } from "../utils/api";
+import "../pages/BusinessDashboard.css";
 
 export default function CreateCampaignModal({ onClose, onCreated }) {
   const [form, setForm] = useState({
@@ -11,40 +12,65 @@ export default function CreateCampaignModal({ onClose, onCreated }) {
     earningPerKm: "",
     totalBudget: "",
     targetDrivers: "",
-    specialRequirements: "",
-    imageUrl: "",
+    requirements: "",
+    image: null,
   });
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    setForm((prev) => ({ ...prev, image: e.target.files[0] }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const data = new FormData();
+    Object.keys(form).forEach((key) => {
+      if (form[key]) data.append(key, form[key]);
+    });
+
     try {
-      await api.post("/api/campaigns", form);
-      onCreated();
-      onClose();
+      await api.post("/api/campaigns", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      // ✅ Wait a moment for the request to complete before closing
+      setTimeout(() => {
+        onCreated(); // refresh campaigns
+        onClose(); // close modal
+      }, 200);
     } catch (err) {
-      console.error(err);
-      alert("Failed to create campaign");
+      console.error("Error creating campaign:", err);
+      alert(err.response?.data?.message || "Error creating campaign");
     }
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <h2>+ Create New Campaign</h2>
-        <form onSubmit={handleSubmit} className="modal-form">
-          <label>Campaign Title</label>
+    <div className="modal-overlay" onClick={onClose}>
+      <div
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()} // prevents close when clicking inside modal
+      >
+        <h3>+ Create New Campaign</h3>
+        <form onSubmit={handleSubmit}>
           <input
             name="title"
-            placeholder="e.g., Summer Sale Campaign"
+            placeholder="Campaign Title"
+            value={form.title}
             onChange={handleChange}
+            required
           />
 
-          <label>Category</label>
-          <select name="category" onChange={handleChange}>
+          <select
+            name="category"
+            value={form.category}
+            onChange={handleChange}
+            required
+          >
             <option value="">Select category</option>
             <option>Food & Beverage</option>
             <option>E-commerce</option>
@@ -56,73 +82,66 @@ export default function CreateCampaignModal({ onClose, onCreated }) {
             <option>Other</option>
           </select>
 
-          <label>Campaign Description</label>
           <textarea
             name="description"
-            placeholder="Describe your campaign"
+            placeholder="Description"
+            value={form.description}
             onChange={handleChange}
           />
 
-          <label>Target Location</label>
           <input
             name="location"
-            placeholder="e.g., Mumbai"
+            placeholder="Target Location"
+            value={form.location}
             onChange={handleChange}
           />
 
-          <label>Campaign Duration</label>
           <input
             name="duration"
-            placeholder="e.g., 30 days"
+            placeholder="Campaign Duration (days)"
+            value={form.duration}
             onChange={handleChange}
           />
 
-          <label>Earning per KM (₹)</label>
           <input
             name="earningPerKm"
-            type="number"
-            placeholder="8"
+            placeholder="Earning per KM"
+            value={form.earningPerKm}
             onChange={handleChange}
           />
 
-          <label>Total Budget (₹)</label>
           <input
             name="totalBudget"
-            type="number"
-            placeholder="50000"
+            placeholder="Total Budget"
+            value={form.totalBudget}
             onChange={handleChange}
           />
 
-          <label>Target Drivers</label>
           <input
             name="targetDrivers"
-            type="number"
-            placeholder="20"
+            placeholder="Target Drivers"
+            value={form.targetDrivers}
             onChange={handleChange}
           />
 
-          <label>Campaign Image (URL)</label>
-          <input
-            name="imageUrl"
-            type="text"
-            placeholder="Paste image URL (temp until upload added)"
-            onChange={handleChange}
-          />
-
-          <label>Special Requirements</label>
           <textarea
-            name="specialRequirements"
-            placeholder="Any specific driver requirements"
+            name="requirements"
+            placeholder="Special Requirements"
+            value={form.requirements}
             onChange={handleChange}
           />
 
-          <div className="modal-buttons">
+          {/* Upload Section */}
+          <div className="upload-section">
+            <label>Upload Campaign Image</label>
+            <input type="file" accept="image/*" onChange={handleFileChange} />
+          </div>
+
+          <div className="actions">
             <button type="button" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="primary">
-              Create Campaign
-            </button>
+            <button type="submit">Create Campaign</button>
           </div>
         </form>
       </div>

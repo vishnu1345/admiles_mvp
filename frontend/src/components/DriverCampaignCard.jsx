@@ -1,24 +1,30 @@
 import React from "react";
+import "../App.css"
 
 export default function DriverCampaignCard({ campaign, onApply }) {
   return (
-    <div className="campaign-card">
+    <div className="driver-card">
       <img
-        src={campaign.imageUrl || "https://via.placeholder.com/300x200"}
+        src={`http://localhost:4000${campaign.imageUrl}`}
         alt={campaign.title}
+        className="driver-card-image"
       />
-      <div className="info">
+      <div className="driver-card-content">
         <h3>{campaign.title}</h3>
-        <p className="category">{campaign.category}</p>
-        <p>{campaign.agency?.name}</p>
-        <p className="desc">{campaign.description}</p>
-
-        <p>🕒 {campaign.duration}</p>
-        <p>📍 {campaign.location}</p>
-        <p className="price">
-          ₹{campaign.earningPerKm}/km • ₹{campaign.totalBudget} total
+        <div className="tag-row">
+          <span className="category">{campaign.category}</span>
+        </div>
+        <p className="company">
+          {campaign.agency?.businessProfile?.companyName}
         </p>
-
+        <p className="desc">{campaign.description}</p>
+        <div className="meta">
+          <p>🕒 {campaign.duration} days</p>
+          <p>📍 {campaign.location}</p>
+          <p className="price">
+            ₹{campaign.earningPerKm}/km • ₹{campaign.totalBudget} total
+          </p>
+        </div>
         <button className="apply-btn" onClick={() => onApply(campaign._id)}>
           Apply Now
         </button>
