@@ -116,3 +116,19 @@
   background: #000;
   color: #fff;
 }
+
+.application-card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: #fff;
+}
+.approve-btn {
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
