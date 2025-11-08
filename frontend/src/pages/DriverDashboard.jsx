@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../utils/api";
 import DriverCampaignCard from "../components/DriverCampaignCard";
+import "./DriverDashboard.css"
+
 
 export default function DriverDashboard() {
   const [tab, setTab] = useState("browse");
@@ -56,7 +58,7 @@ export default function DriverDashboard() {
             <p className="welcome">Welcome back, {user.name?.split(" ")[0]}</p>
           )}
         </div>
-        <button onClick={logout}>Logout</button>
+        <button onClick={logout}>⎋ Logout</button>
       </header>
 
       <div className="tabs">
@@ -82,7 +84,7 @@ export default function DriverDashboard() {
             <span>{campaigns.length} Active Campaigns</span>
           </div>
 
-          <div className="campaign-grid">
+          <div className="campaign-grid-driver">
             {campaigns.map((c) => (
               <DriverCampaignCard
                 key={c._id}
@@ -115,7 +117,11 @@ export default function DriverDashboard() {
                       )}
                     </>
                   )}
-                  <span className={`status ${a.status}`}>{a.status}</span>
+                  <span
+                    className={`status ${a.status}`}
+                  >
+                    {a.status}
+                  </span>
                 </div>
               ))}
             </div>

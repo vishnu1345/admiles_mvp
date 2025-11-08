@@ -21,10 +21,10 @@
   align-items: center;
 }
 
-.campaign-grid {
+.campaign-grid-driver{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  gap: 50px;
 }
 
 .campaign-card {
@@ -47,7 +47,7 @@
 .campaign-card .price {
   color: green;
   font-weight: bold;
-  margin: 10px 0;
+ 
 }
 .apply-btn {
   background: #000;
@@ -66,6 +66,7 @@
   margin-bottom: 10px;
   background: #fff;
 }
+
 .status.approved {
   background: #d7f3d1;
   color: #157f00;

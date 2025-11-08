@@ -1,62 +1,48 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../utils/api";
-
 import CreateCampaignModal from "../components/CreateCampaginModal";
-import "./BusinessDashboard.css"
+import "./BusinessDashboard.css";
 
 export default function BusinessDashboard() {
-    const [tab, setTab] = useState("campaigns");
+  const [tab, setTab] = useState("campaigns");
   const [showModal, setShowModal] = useState(false);
   const [campaigns, setCampaigns] = useState([]);
-   const [applications, setApplications] = useState([]);
-   const [user, setUser] = useState(null);
+  const [applications, setApplications] = useState([]);
+  const [user, setUser] = useState(null);
 
-    const loadUser = async () => {
-      const { data } = await api.get("/auth/me");
-      setUser(data);
-    };
+  const loadUser = async () => {
+    const { data } = await api.get("/auth/me");
+    setUser(data);
+  };
 
-     const loadCampaigns = async () => {
-       const { data } = await api.get("/api/campaigns");
-       setCampaigns(data);
-     };
+  const loadCampaigns = async () => {
+    const { data } = await api.get("/api/campaigns");
+    setCampaigns(data);
+  };
 
-      const loadApplications = async () => {
-        const { data } = await api.get("/api/applications/business/all");
-        setApplications(data);
-      };
+  const loadApplications = async () => {
+    const { data } = await api.get("/api/applications/business/all");
+    setApplications(data);
+  };
 
-//   const fetchCampaigns = async () => {
-//     try {
-//       const { data } = await api.get("/api/campaigns/my");
-//       setCampaigns(data);
-//     } catch (err) {
-//       console.error("Error fetching campaigns", err);
-//     }
-//   };
+  useEffect(() => {
+    loadUser();
+  }, []);
 
-//   useEffect(() => {
-//     fetchCampaigns();
-//   }, []);
+  useEffect(() => {
+    if (tab === "campaigns") loadCampaigns();
+    else if (tab === "drivers") loadApplications();
+  }, [tab]);
 
- useEffect(() => {
-   loadUser();
- }, []);
-
- useEffect(() => {
-   if (tab === "campaigns") loadCampaigns();
-   else if (tab === "drivers") loadApplications();
- }, [tab]);
-
- const approveDriver = async (id) => {
-   try {
-     await api.put(`/api/applications/approve/${id}`);
-     alert("Driver approved successfully!");
-     loadApplications();
-   } catch (err) {
-     alert(err.response?.data?.message || "Error approving driver");
-   }
- };
+  const approveDriver = async (id) => {
+    try {
+      await api.put(`/api/applications/approve/${id}`);
+      alert("Driver approved successfully!");
+      loadApplications();
+    } catch (err) {
+      alert(err.response?.data?.message || "Error approving driver");
+    }
+  };
 
   const logout = async () => {
     await api.get("/auth/logout");
@@ -65,16 +51,20 @@ export default function BusinessDashboard() {
 
   return (
     <div className="dashboard">
+      {/* Top Navbar */}
       <header className="navbar">
-        <div className="left">
+        <div className="logo-section">
           <h2>🏢 AdMiles Agency</h2>
           {user && (
             <p className="welcome">Welcome back, {user.name?.split(" ")[0]}</p>
           )}
         </div>
-        <button onClick={logout}>Logout</button>
+        <button className="logout-btn" onClick={logout}>
+          ⎋ Logout
+        </button>
       </header>
 
+      {/* Tabs */}
       <div className="tabs">
         <button
           className={tab === "campaigns" ? "active" : ""}
@@ -86,16 +76,17 @@ export default function BusinessDashboard() {
           className={tab === "drivers" ? "active" : ""}
           onClick={() => setTab("drivers")}
         >
-          Active Drivers
+           Drivers
         </button>
         <button disabled>Analytics</button>
       </div>
 
+      {/* === Campaign Section === */}
       {tab === "campaigns" && (
         <section className="campaign-section">
           <div className="header">
             <h3>Campaign Management</h3>
-            <button onClick={() => setShowModal(true)}>
+            <button className="primary-btn" onClick={() => setShowModal(true)}>
               + Create Campaign
             </button>
           </div>
@@ -105,10 +96,13 @@ export default function BusinessDashboard() {
               <div className="campaign-card" key={c._id}>
                 <img src={`http://localhost:4000${c.imageUrl}`} alt={c.title} />
                 <h4>{c.title}</h4>
-                <p>{c.category}</p>
-                <p>{c.description}</p>
-                <p>₹{c.earningPerKm}/km</p>
-                <span className={`status ${c.status}`}>{c.status}</span>
+                <span className="category">{c.category}</span>
+                <p className="desc">{c.description}</p>
+                <div className="meta">
+                  <p>📍 {c.location}</p>
+                  <p>🕒 {c.duration} days</p>
+                  <p className="price">₹{c.earningPerKm}/km</p>
+                </div>
               </div>
             ))}
           </div>
@@ -122,31 +116,33 @@ export default function BusinessDashboard() {
         </section>
       )}
 
+      {/* === Active Drivers Section === */}
       {tab === "drivers" && (
         <section className="drivers-section">
-          <h3>Active Drivers & Applications</h3>
+          <h3>Drivers</h3>
           {applications.length === 0 ? (
-            <p>No applications yet.</p>
+            <p>No active drivers yet.</p>
           ) : (
-            <div className="application-list">
+            <div className="drivers-list">
               {applications.map((a) => (
-                <div key={a._id} className="application-card">
-                  <h4>{a.driver?.name}</h4>
-                  <p>{a.driver?.email}</p>
-                  <p>Campaign: {a.campaign?.title}</p>
-                  <p>
-                    {a.status === "pending"
-                      ? "⏳ Pending Approval"
-                      : "✅ Active"}
-                  </p>
-                  {a.status === "pending" && (
-                    <button
-                      className="approve-btn"
-                      onClick={() => approveDriver(a._id)}
-                    >
-                      Approve
-                    </button>
-                  )}
+                <div key={a._id} className="driver-card">
+                  <div>
+                    <h4>{a.driver?.name}</h4>
+                    <p>Vehicle: {a.driver?.rickshawNumber}</p>
+                    <p>Campaign: {a.campaign?.title}</p>
+                  </div>
+                  <div className="driver-status">
+                    {a.status === "pending" ? (
+                      <button
+                        className="approve-btn"
+                        onClick={() => approveDriver(a._id)}
+                      >
+                        Approve
+                      </button>
+                    ) : (
+                      <span className="active-status">Active ✅</span>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
