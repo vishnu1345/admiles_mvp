@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../utils/api";
 import DriverCampaignCard from "../components/DriverCampaignCard";
-import "./DriverDashboard.css"
 
 export default function DriverDashboard() {
   const [tab, setTab] = useState("browse");
   const [campaigns, setCampaigns] = useState([]);
   const [applications, setApplications] = useState([]);
+  const [user, setUser] = useState(null);
+
+  const loadUser = async () => {
+    const { data } = await api.get("/auth/me");
+    setUser(data);
+  };
 
   const loadCampaigns = async () => {
     const { data } = await api.get("/api/applications/browse");
@@ -34,6 +39,10 @@ export default function DriverDashboard() {
   };
 
   useEffect(() => {
+    loadUser();
+  }, []);
+
+  useEffect(() => {
     if (tab === "browse") loadCampaigns();
     else loadApplications();
   }, [tab]);
@@ -41,11 +50,13 @@ export default function DriverDashboard() {
   return (
     <div className="dashboard">
       <header className="navbar">
-        <h2>🚖 AdMiles Driver</h2>
-        <div>
-          <span>Welcome back,</span>
-          <button onClick={logout}>Logout</button>
+        <div className="left">
+          <h2>🚖 AdMiles Driver</h2>
+          {user && (
+            <p className="welcome">Welcome back, {user.name?.split(" ")[0]}</p>
+          )}
         </div>
+        <button onClick={logout}>Logout</button>
       </header>
 
       <div className="tabs">

@@ -8,6 +8,12 @@ export default function BusinessDashboard() {
   const [campaigns, setCampaigns] = useState([]);
   const [applications, setApplications] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [user, setUser] = useState(null);
+
+  const loadUser = async () => {
+    const { data } = await api.get("/auth/me");
+    setUser(data);
+  };
 
   const loadCampaigns = async () => {
     const { data } = await api.get("/api/campaigns");
@@ -18,6 +24,10 @@ export default function BusinessDashboard() {
     const { data } = await api.get("/api/applications/business/all");
     setApplications(data);
   };
+
+  useEffect(() => {
+    loadUser();
+  }, []);
 
   useEffect(() => {
     if (tab === "campaigns") loadCampaigns();
@@ -42,11 +52,13 @@ export default function BusinessDashboard() {
   return (
     <div className="dashboard">
       <header className="navbar">
-        <h2>🏢 AdMiles Agency</h2>
-        <div>
-          <span>Welcome back,</span>
-          <button onClick={logout}>Logout</button>
+        <div className="left">
+          <h2>🏢 AdMiles Agency</h2>
+          {user && (
+            <p className="welcome">Welcome back, {user.name?.split(" ")[0]}</p>
+          )}
         </div>
+        <button onClick={logout}>Logout</button>
       </header>
 
       <div className="tabs">
