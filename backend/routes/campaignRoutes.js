@@ -4,6 +4,7 @@ import path from "path";
 import fs from "fs";
 import { isAuthed, requireRole } from "../middleware/auth.js";
 import Campaign from "../models/Campaign.js";
+import { deleteCampaign } from "../controllers/campaignController.js";
 
 const router = express.Router();
 
@@ -25,6 +26,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+router.delete("/:id", deleteCampaign);
 
 router.post(
   "/",

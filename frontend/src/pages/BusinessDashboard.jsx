@@ -43,6 +43,19 @@ export default function BusinessDashboard() {
       alert(err.response?.data?.message || "Error approving driver");
     }
   };
+  const endCampaign = async (id) => {
+    if (
+      !window.confirm("Are you sure you want to end this campaign permanently?")
+    )
+      return;
+    try {
+      await api.delete(`/api/campaigns/${id}`);
+      alert("Campaign ended successfully!");
+      setCampaigns((prev) => prev.filter((c) => c._id !== id)); // remove from UI instantly
+    } catch (err) {
+      alert(err.response?.data?.message || "Error ending campaign");
+    }
+  };
 
   const logout = async () => {
     await api.get("/auth/logout");
@@ -103,7 +116,14 @@ export default function BusinessDashboard() {
                   <p>🕒 {c.duration} days</p>
                   <p className="price">₹{c.earningPerKm}/km</p>
                 </div>
+                <button
+                  className="end-btn"
+                  onClick={() => endCampaign(c._id)}
+                >
+                  End Campaign
+                </button>
               </div>
+
             ))}
           </div>
 
