@@ -10,6 +10,7 @@ import authRoutes from "./routes/authRoutes.js";
 import registerRoutes from "./routes/registerRoutes.js"
 import { isAuthed, requireRole } from "./middleware/auth.js";
 import campaignRoutes from "./routes/campaignRoutes.js"
+import applicationRoutes from "./routes/applicationRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -53,6 +54,7 @@ mongoose
 app.use("/auth", authRoutes);
 app.use('/api/register' , registerRoutes);
 app.use('/api/campaigns' , campaignRoutes);
+app.use("/api/applications", applicationRoutes);
 
 // Example protected APIs
 app.get("/api/driver/secret", isAuthed, requireRole("driver"), (req, res) => {
