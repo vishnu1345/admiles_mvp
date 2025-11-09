@@ -19,12 +19,20 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 const app = express();
 
+// app.use(
+//   cors({
+//     origin: process.env.CLIENT_URL,
+//     credentials: true,
+//   })
+// );
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: ["http://localhost:5173", "https://admiles.vercel.app"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
+
 app.use(express.json());
 
 
