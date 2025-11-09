@@ -18,6 +18,7 @@ const campaignSchema = new mongoose.Schema(
     imageUrl: { type: String },
     specialRequirements: { type: String },
     status: { type: String, enum: ["draft", "active"], default: "draft" },
+    imagePublicId : {type : String},
   },
   { timestamps: true }
 );

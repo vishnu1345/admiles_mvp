@@ -5,7 +5,7 @@ export default function DriverCampaignCard({ campaign, onApply }) {
   return (
     <div className="driver-card">
       <img
-        src={`http://localhost:4000${campaign.imageUrl}`}
+        src={campaign.imageUrl}
         alt={campaign.title}
         className="driver-card-image"
       />

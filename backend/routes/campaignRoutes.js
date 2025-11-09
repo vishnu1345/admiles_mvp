@@ -1,38 +1,20 @@
 import express from "express";
-import multer from "multer";
-import path from "path";
-import fs from "fs";
 import { isAuthed, requireRole } from "../middleware/auth.js";
 import Campaign from "../models/Campaign.js";
 import { deleteCampaign } from "../controllers/campaignController.js";
+import { upload } from "../config/upload.js";
 
 const router = express.Router();
 
-const uploadDir = path.resolve("uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
-  console.log("📁 Created uploads directory");
-}
 
-// Setup storage folder for images
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
+router.delete("/:id", isAuthed, requireRole("business"), deleteCampaign);
 
-const upload = multer({ storage });
-
-router.delete("/:id", deleteCampaign);
 
 router.post(
   "/",
   isAuthed,
   requireRole("business"),
-  upload.single("image"),
+  upload.single("image"), // field name must match frontend
   async (req, res) => {
     try {
       const {
@@ -45,7 +27,13 @@ router.post(
         totalBudget,
         targetDrivers,
         requirements,
+        contactEmail,
+        contactPhone,
       } = req.body;
+
+  
+      const imageUrl = req.file?.path || "";
+      const imagePublicId = req.file?.filename || "";
 
       const newCampaign = await Campaign.create({
         title,
@@ -57,31 +45,43 @@ router.post(
         totalBudget,
         targetDrivers,
         requirements,
-        imageUrl: req.file ? `/uploads/${req.file.filename}` : null,
+        contactEmail,
+        contactPhone,
+        imageUrl,
+        imagePublicId,
         agency: req.user._id,
       });
 
-      res.json(newCampaign);
+      res.status(201).json(newCampaign);
     } catch (err) {
-      console.error(err);
+      console.error("Error creating campaign:", err);
       res.status(500).json({ message: "Error creating campaign" });
     }
   }
 );
 
-// Get all campaigns for this business
+
 router.get("/", isAuthed, requireRole("business"), async (req, res) => {
-  const campaigns = await Campaign.find({ agency: req.user._id });
-  res.json(campaigns);
+  try {
+    const campaigns = await Campaign.find({ agency: req.user._id }).sort({
+      createdAt: -1,
+    });
+    res.json(campaigns);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching campaigns" });
+  }
 });
 
-// Get all campaigns (for drivers)
 router.get("/all", async (req, res) => {
-  const campaigns = await Campaign.find().populate(
-    "agency",
-    "businessProfile.companyName"
-  );
-  res.json(campaigns);
+  try {
+    const campaigns = await Campaign.find().populate(
+      "agency",
+      "businessProfile.companyName"
+    );
+    res.json(campaigns);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching all campaigns" });
+  }
 });
 
 export default router;

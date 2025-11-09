@@ -107,7 +107,7 @@ export default function BusinessDashboard() {
           <div className="campaign-grid">
             {campaigns.map((c) => (
               <div className="campaign-card" key={c._id}>
-                <img src={`http://localhost:4000${c.imageUrl}`} alt={c.title} />
+                <img src={c.imageUrl} alt={c.title} />
                 <h4>{c.title}</h4>
                 <span className="category">{c.category}</span>
                 <p className="desc">{c.description}</p>
