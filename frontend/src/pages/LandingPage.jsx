@@ -2,7 +2,7 @@ import React from "react";
 import "./LandingPage.css";
 import CardBox from "../components/SignupCard";
 
-const API = import.meta.env.VITE_API_BASE_URL;
+const API = "http://localhost:4000";
 
 function LandingPage() {
   return (

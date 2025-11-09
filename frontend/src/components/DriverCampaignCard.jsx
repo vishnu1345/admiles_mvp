@@ -5,7 +5,7 @@ export default function DriverCampaignCard({ campaign, onApply }) {
   return (
     <div className="driver-card">
       <img
-        src={`${import.meta.env.VITE_API_BASE_URL}${campaign.imageUrl}`}
+        src={`http://localhost:4000${campaign.imageUrl}`}
         alt={campaign.title}
         className="driver-card-image"
       />

@@ -89,7 +89,7 @@ export default function BusinessDashboard() {
           className={tab === "drivers" ? "active" : ""}
           onClick={() => setTab("drivers")}
         >
-          Drivers
+           Drivers
         </button>
         <button disabled>Analytics</button>
       </div>
@@ -107,10 +107,7 @@ export default function BusinessDashboard() {
           <div className="campaign-grid">
             {campaigns.map((c) => (
               <div className="campaign-card" key={c._id}>
-                <img
-                  src={`${import.meta.env.VITE_API_BASE_URL}${c.imageUrl}`}
-                  alt={c.title}
-                />
+                <img src={`http://localhost:4000${c.imageUrl}`} alt={c.title} />
                 <h4>{c.title}</h4>
                 <span className="category">{c.category}</span>
                 <p className="desc">{c.description}</p>
@@ -119,10 +116,14 @@ export default function BusinessDashboard() {
                   <p>🕒 {c.duration} days</p>
                   <p className="price">₹{c.earningPerKm}/km</p>
                 </div>
-                <button className="end-btn" onClick={() => endCampaign(c._id)}>
+                <button
+                  className="end-btn"
+                  onClick={() => endCampaign(c._id)}
+                >
                   End Campaign
                 </button>
               </div>
+
             ))}
           </div>
 
