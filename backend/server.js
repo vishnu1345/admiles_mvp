@@ -64,6 +64,16 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("Mongo connected"));
 
+  app.use((req, res, next) => {
+    console.log("🔹 Incoming request:", req.method, req.path);
+    console.log("🔹 Origin:", req.headers.origin);
+    console.log("🔹 Cookies:", req.headers.cookie);
+    console.log("🔹 Session ID:", req.sessionID);
+    console.log("🔹 User:", req.user);
+    next();
+  });
+
+
 app.use("/auth", authRoutes);
 app.use('/api/register' , registerRoutes);
 app.use('/api/campaigns' , campaignRoutes);
