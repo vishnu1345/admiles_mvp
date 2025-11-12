@@ -38,6 +38,14 @@ app.use(
 
 app.use(express.json());
 
+const isProduction = process.env.NODE_ENV === "production";
+const cookieOptions = {
+  httpOnly: true,
+  maxAge: 15 * 24 * 60 * 60 * 1000,
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
+};
+console.log("Cookie Options:", cookieOptions);
 
 
 // Session store in Mongo (so sessions survive restarts)
@@ -53,9 +61,11 @@ app.use(
     cookie: {
       httpOnly: true,
       maxAge: 15 * 24 * 60 * 60 * 1000,
-      secure: process.env.NODE_ENV === "production", 
+      secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
+
+    proxy: process.env.NODE_ENV === "production",
   })
 );
 
