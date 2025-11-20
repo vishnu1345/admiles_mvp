@@ -19,6 +19,8 @@ export default function CreateCampaignModal({ onClose, onCreated }) {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -72,6 +74,8 @@ export default function CreateCampaignModal({ onClose, onCreated }) {
       return;
     }
 
+    setLoading(true);
+
     const data = new FormData();
     Object.keys(form).forEach((key) => {
       if (form[key]) data.append(key, form[key]);
@@ -89,6 +93,8 @@ export default function CreateCampaignModal({ onClose, onCreated }) {
     } catch (err) {
       console.error("Error creating campaign:", err);
       alert(err.response?.data?.message || "Error creating campaign");
+    } finally{
+        setLoading(false);
     }
   };
 
@@ -254,7 +260,9 @@ export default function CreateCampaignModal({ onClose, onCreated }) {
             <button type="button" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit">Create Campaign</button>
+            <button type="submit" disabled={loading}>
+              {loading ? "Creating..." : "Create Campaign"}
+            </button>
           </div>
         </form>
       </div>
