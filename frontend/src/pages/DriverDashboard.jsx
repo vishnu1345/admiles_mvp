@@ -74,7 +74,7 @@ export default function DriverDashboard() {
         >
           My Applications
         </button>
-        <button disabled>Earnings</button>
+        {/* <button disabled>Earnings</button> */}
       </div>
 
       {tab === "browse" && (

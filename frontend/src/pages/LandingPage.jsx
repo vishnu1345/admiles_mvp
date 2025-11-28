@@ -2,13 +2,15 @@ import React from "react";
 import "./landingpage.css";
 import CardBox from "../components/SignupCard";
 
+
 const API = import.meta.env.VITE_API_BASE_URL;
 
 function LandingPage() {
   return (
     <div className="landing-container">
-      <nav className="navbar">
-        <h2 className="logo">🚖 AdMiles</h2>
+      <nav className="navbar-main">
+        {/* <img src="/logo.png" alt="Admiles" /> */}
+        <h2>🛺 Admiles</h2>
         <p className="tagline">Connecting Drivers & Advertisers</p>
         <a className="login-btn" href={`${API}/auth/google-login`}>
           Login
