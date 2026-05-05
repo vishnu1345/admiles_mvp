@@ -17,10 +17,14 @@ const campaignSchema = new mongoose.Schema(
     targetDrivers: { type: Number, required: true },
     imageUrl: { type: String },
     specialRequirements: { type: String },
-    status: { type: String, enum: ["draft", "active"], default: "draft" },
+    status: { type: String, enum: ["draft", "active", "in-progress", "completed"], default: "active" },
     imagePublicId : {type : String},
+    startDate: { type: Date },
   },
   { timestamps: true }
 );
+
+// Compound index for optimizing filtered dashboard queries
+campaignSchema.index({ location: 1, status: 1 });
 
 export default mongoose.model("Campaign", campaignSchema);

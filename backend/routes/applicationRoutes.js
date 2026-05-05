@@ -64,7 +64,7 @@ router.get("/", isAuthed, requireRole("driver"), async (req, res) => {
 /* ---------- DRIVER: BROWSE ALL CAMPAIGNS ---------- */
 router.get("/browse", isAuthed, requireRole("driver"), async (req, res) => {
   try {
-    const campaigns = await Campaign.find().populate("agency", "name email");
+    const campaigns = await Campaign.find({ status: "active" }).populate("agency", "name email");
     res.json(campaigns);
   } catch (err) {
     res.status(500).json({ message: "Error fetching campaigns" });
@@ -124,6 +124,21 @@ router.put(
       application.status = "approved";
       application.startedDate = new Date();
       await application.save();
+
+      // Check campaign target limit
+      const campaign = await Campaign.findById(application.campaign);
+      if (campaign) {
+        const approvedCount = await Application.countDocuments({
+          campaign: campaign._id,
+          status: "approved",
+        });
+
+        if (approvedCount >= campaign.targetDrivers) {
+          campaign.status = "in-progress";
+          campaign.startDate = new Date();
+          await campaign.save();
+        }
+      }
 
       res.json({ message: "Application approved successfully." });
     } catch (err) {

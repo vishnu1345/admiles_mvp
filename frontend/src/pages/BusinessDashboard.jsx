@@ -57,6 +57,17 @@ export default function BusinessDashboard() {
     }
   };
 
+  const markComplete = async (id) => {
+    if (!window.confirm("Mark this campaign as completed?")) return;
+    try {
+      await api.put(`/api/campaigns/complete/${id}`);
+      alert("Campaign marked as completed!");
+      loadCampaigns();
+    } catch (err) {
+      alert(err.response?.data?.message || "Error completing campaign");
+    }
+  };
+
   const logout = async () => {
     await api.get("/auth/logout");
     window.location.href = "/";
@@ -115,13 +126,21 @@ export default function BusinessDashboard() {
                   <p>📍 {c.location}</p>
                   <p>🕒 {c.duration} days</p>
                   <p className="price">₹{c.earningPerKm}/km</p>
+                  <p className={`status-badge ${c.status}`}>Status: {c.status}</p>
                 </div>
-                <button
-                  className="end-btn"
-                  onClick={() => endCampaign(c._id)}
-                >
-                  End Campaign
-                </button>
+                <div className="action-buttons" style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                  {(c.status === "active" || c.status === "in-progress") && (
+                    <button className="approve-btn" onClick={() => markComplete(c._id)}>
+                      Mark Completed
+                    </button>
+                  )}
+                  <button
+                    className="end-btn"
+                    onClick={() => endCampaign(c._id)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
 
             ))}

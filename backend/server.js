@@ -1,4 +1,4 @@
-import express from "express";
+import express from "express"; // Restarting server
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -11,6 +11,10 @@ import registerRoutes from "./routes/registerRoutes.js"
 import { isAuthed, requireRole } from "./middleware/auth.js";
 import campaignRoutes from "./routes/campaignRoutes.js"
 import applicationRoutes from "./routes/applicationRoutes.js";
+import trackingRoutes from "./routes/trackingRoutes.js";
+import verificationRoutes from "./routes/verificationRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
@@ -61,12 +65,11 @@ app.use(
     cookie: {
       httpOnly: true,
       maxAge: 15 * 24 * 60 * 60 * 1000,
-      domain:
-        process.env.NODE_ENV === "production"
-          ? "admiles-server.onrender.com"
-          : undefined,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      ...(process.env.NODE_ENV === "production" && {
+        domain: "admiles-server.onrender.com",
+        secure: true,
+        sameSite: "none",
+      }),
     },
 
     proxy: process.env.NODE_ENV === "production",
@@ -95,6 +98,10 @@ app.use("/auth", authRoutes);
 app.use('/api/register' , registerRoutes);
 app.use('/api/campaigns' , campaignRoutes);
 app.use("/api/applications", applicationRoutes);
+app.use("/api/tracking", trackingRoutes);
+app.use("/api/verifications", verificationRoutes);
+app.use("/api/payments", paymentRoutes);
+app.use("/api/analytics", analyticsRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Example protected APIs

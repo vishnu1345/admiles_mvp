@@ -22,7 +22,7 @@ passport.use(
 
         if (!user) {
          
-          const roleFromSession = req.session?.role;
+          const roleFromSession = req.session?.role || req.query.state;
           if (!roleFromSession) {
             // User clicked Login without ever signing up -> reject
             return done(null, false, {

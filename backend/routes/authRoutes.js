@@ -10,10 +10,19 @@ router.get(
     const role = (req.query.role || "").toLowerCase();
     if (!["driver", "business"].includes(role))
       return res.status(400).send("Invalid or missing role");
+    
     req.session.role = role;
-    next();
-  },
-  passport.authenticate("google", { scope: ["profile", "email"] })
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).send("Error saving session");
+      }
+      passport.authenticate("google", { 
+        scope: ["profile", "email"],
+        state: role // Bulletproof fallback for session loss
+      })(req, res, next);
+    });
+  }
 );
 
 /* ---------- LOGIN (no role, just existing users) ---------- */

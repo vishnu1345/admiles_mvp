@@ -9,6 +9,22 @@ const router = express.Router();
 
 router.delete("/:id", isAuthed, requireRole("business"), deleteCampaign);
 
+router.put("/complete/:id", isAuthed, requireRole("business"), async (req, res) => {
+  try {
+    const campaign = await Campaign.findOneAndUpdate(
+      { _id: req.params.id, agency: req.user._id },
+      { status: "completed" },
+      { new: true }
+    );
+    if (!campaign) {
+      return res.status(404).json({ message: "Campaign not found" });
+    }
+    res.json({ message: "Campaign marked as completed", campaign });
+  } catch (err) {
+    res.status(500).json({ message: "Error completing campaign" });
+  }
+});
+
 
 router.post(
   "/",
