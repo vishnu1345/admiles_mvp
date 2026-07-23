@@ -8,7 +8,6 @@ export default function DriverDashboard() {
   const [tab, setTab] = useState("browse");
   const [campaigns, setCampaigns] = useState([]);
   const [applications, setApplications] = useState([]);
-  const [earnings, setEarnings] = useState(null);
   const [user, setUser] = useState(null);
 
   const loadUser = async () => {
@@ -24,44 +23,6 @@ export default function DriverDashboard() {
   const loadApplications = async () => {
     const { data } = await api.get("/api/applications");
     setApplications(data);
-  };
-
-  const loadEarnings = async () => {
-    if(!user) return;
-    try {
-      const { data } = await api.get(`/api/analytics/driver/${user._id}`);
-      setEarnings(data.data);
-    } catch(err) {
-      console.error(err);
-    }
-  };
-
-  const simulatePing = async (applicationId) => {
-    try {
-      const lng = 72.8 + Math.random() * 0.1;
-      const lat = 19.0 + Math.random() * 0.1;
-      await api.post('/api/tracking/ping', {
-        applicationId,
-        longitude: lng,
-        latitude: lat,
-        speed: 40
-      });
-      alert("GPS Ping Sent! (Mock Location Data)");
-    } catch(err) {
-      alert("Error sending ping");
-    }
-  };
-
-  const simulatePhoto = async (applicationId) => {
-    try {
-      await api.post('/api/verifications', {
-        applicationId,
-        photoUrl: "https://res.cloudinary.com/demo/image/upload/sample.jpg"
-      });
-      alert("Photo verification submitted! (Mock Image)");
-    } catch(err) {
-      alert("Error submitting photo");
-    }
   };
 
   const handleApply = async (id) => {
@@ -113,15 +74,6 @@ export default function DriverDashboard() {
         >
           My Applications
         </button>
-        <button
-          className={tab === "earnings" ? "active" : ""}
-          onClick={() => {
-            setTab("earnings");
-            loadEarnings();
-          }}
-        >
-          Tools & Earnings
-        </button>
       </div>
 
       {tab === "browse" && (
@@ -155,45 +107,15 @@ export default function DriverDashboard() {
                   <h4>{a.campaign?.title}</h4>
                   <p>Applied: {a.appliedDate.split("T")[0]}</p>
                   {a.status === "approved" && a.campaign && (
-                    <>
-                      <p>
-                        Started: {a.startedDate?.split("T")[0] || "Pending"}
-                      </p>
-                      {a.photoVerified && (
-                        <span className="verified">✔ Photo Verified</span>
-                      )}
-                    </>
+                    <p>
+                      Started: {a.startedDate?.split("T")[0] || "Pending"}
+                    </p>
                   )}
                   <span
                     className={`status ${a.status}`}
                   >
                     {a.status}
                   </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      )}
-
-      {tab === "earnings" && (
-        <section className="applications-section">
-          <h3>Tools & Earnings</h3>
-          <button onClick={loadEarnings} className="primary-btn" style={{marginBottom: "10px"}}>Refresh</button>
-          {(!earnings || earnings.length === 0) ? (
-            <p>No active earnings or approved applications yet.</p>
-          ) : (
-             <div className="application-list">
-              {earnings.map((e, idx) => (
-                <div key={idx} className="application-card">
-                  <h4>{e.campaignName}</h4>
-                  <p>Rate: ₹{e.ratePerKm}/km</p>
-                  <p>Distance Logged: {e.totalDistance || 0} km</p>
-                  <p className="price">Total Earned: ₹{e.totalEarned || 0}</p>
-                  <div style={{display: 'flex', gap: '10px', marginTop: '10px'}}>
-                    <button className="approve-btn" onClick={() => simulatePing(e._id)}>Simulate GPS Ping</button>
-                    <button className="end-btn" onClick={() => simulatePhoto(e._id)}>Upload Photo Proof</button>
-                  </div>
                 </div>
               ))}
             </div>

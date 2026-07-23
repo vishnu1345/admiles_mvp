@@ -19,7 +19,6 @@ const applicationSchema = new mongoose.Schema(
     },
     appliedDate: { type: Date, default: Date.now },
     startedDate: { type: Date },
-    photoVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

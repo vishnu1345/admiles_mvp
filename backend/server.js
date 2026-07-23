@@ -11,10 +11,8 @@ import registerRoutes from "./routes/registerRoutes.js"
 import { isAuthed, requireRole } from "./middleware/auth.js";
 import campaignRoutes from "./routes/campaignRoutes.js"
 import applicationRoutes from "./routes/applicationRoutes.js";
-import trackingRoutes from "./routes/trackingRoutes.js";
-import verificationRoutes from "./routes/verificationRoutes.js";
-import paymentRoutes from "./routes/paymentRoutes.js";
-import analyticsRoutes from "./routes/analyticsRoutes.js";
+import { initCampaignWorker } from "./workers/campaignWorker.js";
+import Campaign from "./models/Campaign.js";
 import path from "path";
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
@@ -82,7 +80,33 @@ app.use(passport.session());
 
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("Mongo connected"));
+  .then(async () => {
+    console.log("Mongo connected");
+
+    // 1. Initialize BullMQ worker
+    try {
+      initCampaignWorker();
+      console.log("🚀 BullMQ Campaign Expiration Worker initialized");
+    } catch (err) {
+      console.error("⚠️ Failed to initialize BullMQ worker:", err.message);
+    }
+
+    // 2. Startup Reconciliation: Catch any campaigns that expired while server/Redis was offline
+    try {
+      const reconciled = await Campaign.updateMany(
+        {
+          status: { $in: ["active", "in-progress"] },
+          endDate: { $lte: new Date() },
+        },
+        { status: "expired" }
+      );
+      if (reconciled.modifiedCount > 0) {
+        console.log(`🔄 [Reconciliation] Marked ${reconciled.modifiedCount} overdue campaign(s) as EXPIRED.`);
+      }
+    } catch (recErr) {
+      console.error("⚠️ Startup reconciliation error:", recErr.message);
+    }
+  });
 
   app.use((req, res, next) => {
     console.log("🔹 Incoming request:", req.method, req.path);
@@ -98,10 +122,6 @@ app.use("/auth", authRoutes);
 app.use('/api/register' , registerRoutes);
 app.use('/api/campaigns' , campaignRoutes);
 app.use("/api/applications", applicationRoutes);
-app.use("/api/tracking", trackingRoutes);
-app.use("/api/verifications", verificationRoutes);
-app.use("/api/payments", paymentRoutes);
-app.use("/api/analytics", analyticsRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Example protected APIs

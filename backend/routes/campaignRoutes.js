@@ -3,6 +3,7 @@ import { isAuthed, requireRole } from "../middleware/auth.js";
 import Campaign from "../models/Campaign.js";
 import { deleteCampaign } from "../controllers/campaignController.js";
 import { upload } from "../config/upload.js";
+import { scheduleCampaignExpiration } from "../queues/campaignQueue.js";
 
 const router = express.Router();
 
@@ -47,16 +48,20 @@ router.post(
         contactPhone,
       } = req.body;
 
-  
       const imageUrl = req.file?.path || "";
       const imagePublicId = req.file?.filename || "";
+
+      const durationDays = Number(duration) || 1;
+      const startDate = new Date();
+      const delayMs = durationDays * 24 * 60 * 60 * 1000;
+      const endDate = new Date(startDate.getTime() + delayMs);
 
       const newCampaign = await Campaign.create({
         title,
         category,
         description,
         location,
-        duration,
+        duration: durationDays,
         earningPerKm,
         totalBudget,
         targetDrivers,
@@ -66,7 +71,17 @@ router.post(
         imageUrl,
         imagePublicId,
         agency: req.user._id,
+        startDate,
+        endDate,
       });
+
+      // Schedule automatic expiration in BullMQ
+      try {
+        await scheduleCampaignExpiration(newCampaign._id.toString(), delayMs);
+        console.log(`📌 Scheduled expiration job for campaign ${newCampaign._id} in ${durationDays} days (${delayMs}ms)`);
+      } catch (queueErr) {
+        console.error("⚠️ Failed to schedule BullMQ expiration job:", queueErr.message);
+      }
 
       res.status(201).json(newCampaign);
     } catch (err) {

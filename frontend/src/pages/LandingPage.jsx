@@ -55,7 +55,7 @@ function LandingPage() {
             "Browse available ad campaigns",
             "Earn per kilometer driven",
             "Flexible schedule",
-            "Quick photo verification",
+            "Direct agency connection",
           ]}
           onClick={() => {
             window.location.href = `${API}/auth/google?role=driver`;
